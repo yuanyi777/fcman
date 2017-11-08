@@ -9,9 +9,9 @@ with open(fn, 'rb') as fin:
 	fin.readinto(buf_all)
 
 	fin.seek(0)
-	header = fin.read(3).decode('utf-8')
+	header = fin.read(3)
 	fin.seek(0)
-	if header == 'NES' or header == 'FDS':
+	if header == b'NES' or header == b'FDS':
 		fin.seek(16)
 		size -= 16
 	buf_raw = bytearray(size)

@@ -1,5 +1,6 @@
 import os
 import os.path
+import shutil
 import sys
 import binascii
 
@@ -10,7 +11,7 @@ IDX_NAME = 1
 IDX_PLAT = 2
 IDX_COLLECTED = 3
 
-working_dir = '/Users/yiyuan/Desktop/fc'
+working_dir = '/Users/yiyuan/Desktop/emu/fc'
 
 nointro_list = [None, None]
 
@@ -44,6 +45,8 @@ def update_mylist():
 			continue
 		if game[IDX_CRC] not in name_dict:
 			print('-- No such a crc in nointro dat: ' + game[IDX_NAME] + ' : ' + game[IDX_CRC])
+			game[IDX_CRC] = ''
+			game[IDX_COLLECTED] = '0'
 			continue
 		if game[IDX_NAME] != name_dict[game[IDX_CRC]]:
 			print('-- Change game name from ' + game[IDX_NAME] + ' to ' + name_dict[game[IDX_CRC]])
@@ -68,6 +71,8 @@ def traverse_game_files(game_dir):
 	for gi in mylist:
 		game_dict[gi[IDX_CRC]] = gi
 	file_list = os.listdir(game_dir)
+	if not os.path.exists('deleted'):
+		recycle = os.mkdir('deleted')
 	for f in file_list:
 		fn = os.path.join(game_dir, f)
 		if os.path.isdir(fn):
@@ -80,9 +85,9 @@ def traverse_game_files(game_dir):
 		#print(fn)
 		with open(fn, 'rb') as game_file:
 			size = os.path.getsize(fn)
-			header = game_file.read(3).decode('utf-8')
+			header = game_file.read(3)
 			game_file.seek(0)
-			if header == 'NES' or header == 'FDS':
+			if header == b'NES' or header == b'FDS':
 				game_file.seek(16)
 				size -= 16
 			buf = bytearray(size)
@@ -100,7 +105,8 @@ def traverse_game_files(game_dir):
 					print('-- Renaming: ', f, '-> '+game_info[IDX_NAME]+postfix)
 					os.rename(fn, new_fn)
 		else: # wrong game file
-			print('-- CRC of the game file not in mylist: ', fn, crc)
+			print('-- CRC of the game file not in mylist: ', fn, crc, ' (removed)')
+			shutil.move(fn, 'deleted')
 
 def regenerate_mylist():
 	global collected
@@ -127,7 +133,7 @@ def get_reader(filename):
 	if filename.startswith('Nintendo - Nintendo'):
 		return nointro.xml_reader()
 	elif filename.startswith('Nintendo - Family'):
-		return nointro.cmdat_reader()
+		return nointro.xml_reader()
 
 def main():
 	global nointro_list
