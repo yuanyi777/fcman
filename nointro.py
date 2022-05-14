@@ -20,7 +20,10 @@ class xml_reader(xml.sax.ContentHandler):
 			self.game['name'] = attributes['name']
 		elif self.in_game:
 			if tag == 'rom':
-				self.game['crc'] = attributes['crc']
+				try:
+					self.game['crc'] = attributes['crc']
+				except:
+					self.game['crc'] = ''
 
 	def endElement(self, tag):
 		if tag == 'game':

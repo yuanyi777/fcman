@@ -37,7 +37,7 @@ def update_mylist():
             continue
         for item in nointro_list[i]:
             crc = item['crc'].upper()
-            if crc in nointro_crc2name:
+            if crc in nointro_crc2name and len(crc) > 0:
                 print('-- Replicated crc ', item)
                 continue
             nointro_crc2name[crc] = item['name']
