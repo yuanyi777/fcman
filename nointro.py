@@ -24,6 +24,10 @@ class xml_reader(xml.sax.ContentHandler):
 					self.game['crc'] = attributes['crc']
 				except:
 					self.game['crc'] = ''
+				try:
+					self.game['header'] = attributes['header']
+				except:
+					self.game['header'] = ''
 
 	def endElement(self, tag):
 		if tag == 'game':

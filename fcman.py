@@ -111,7 +111,10 @@ def traverse_game_files(game_dir):
                     os.rename(fn, new_fn)
         else: # wrong game file
             print('-- CRC of the game file not in mylist: ', fn, crc, ' (removed)')
-            shutil.move(fn, 'deleted')
+            try:
+                shutil.move(fn, 'deleted')
+            except Exception as e:
+                print(e)
 
 def regenerate_mylist():
     global collected
@@ -138,7 +141,7 @@ def get_reader(filename):
     return nointro.xml_reader()
 
 def main():
-    fc_dat_file = str(list(Path.cwd().glob("Nintendo - Nintendo Entertainment System (*).dat"))[0])
+    fc_dat_file = str(list(Path.cwd().glob("Nintendo - Nintendo Entertainment System (Headerless) (*).dat"))[0])
     fds_dat_file = str(list(Path.cwd().glob("Nintendo - Family Computer Disk System (FDS) (*).dat"))[0])
     fcn_dat_file = str(list(Path.cwd().glob("Nintendo - Family Computer Network System (*).dat"))[0])
 
